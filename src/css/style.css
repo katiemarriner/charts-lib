@@ -1,0 +1,14 @@
+svg {
+	overflow: visible !important;
+}
+
+.annotation-arrow {
+	stroke: #000;
+	stroke-width: 1;
+	fill: none;
+}
+
+.annotation-text {
+	position: absolute;
+	display: inline-block;
+}
