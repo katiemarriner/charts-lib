@@ -11,4 +11,8 @@ svg {
 .annotation-text {
 	position: absolute;
 	display: inline-block;
+	font-size: 11px;
+	color: #333;
+	max-width: 150px;
+    width: 100%;
 }

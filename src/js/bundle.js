@@ -85,7 +85,7 @@
 			},
 			aOpts: [{
 				index: data.length - 1, //this can be an underscore function or hardcoded as long as it's an object with an x and y value in the same format as the data passed into the chart
-				text: 'blah'
+				text: data[data.length - 1].time + ' ' + data[data.length - 1].value //pass in text or a template
 			}]
 		});
 		SP.drawScaffold();
@@ -26778,7 +26778,15 @@
 	};
 
 	Line.prototype.assets = function () {
-		this.svg.append("svg:defs").append("svg:marker").attr("id", "arrowhead").attr("refX", 6).attr("refY", 6).attr("markerWidth", 15).attr("markerHeight", 15).attr("orient", "auto").append("path").attr("d", "M 0 0 12 6 0 12 3 6").style("fill", "black");
+		this.markerWidth = 10;
+		this.markerHeight = 10;
+		this.cRadius = 4;
+
+		this.svg.append("svg:defs").append('svg:marker').attr('id', 'arrowhead').attr('viewBox', '0 -5 10 10').attr('refX', 0).attr('refY', 0).attr('markerWidth', this.markerWidth).attr('markerHeight', this.markerHeight).attr('orient', 'auto').append('svg:path')
+		// .attr('fill', 'none')
+		// .attr('stroke-width', 1)
+		// .attr('stroke', '#000')
+		.attr('d', 'M0,-5L10,0L0,5');
 	};
 
 	Line.prototype.createScales = function (newOpts) {
@@ -26836,12 +26844,18 @@
 				text: d.text
 			};
 		});
-		new Annotation({
+		this.annotations = new Annotation({
 			container: this.container,
 			g: this.g,
 			xScale: this.x,
 			yScale: this.y,
-			dataPoints: this.aOpts
+			dataPoints: this.aOpts,
+			margin: this.margin,
+			markers: {
+				markerWidth: this.markerWidth,
+				markerHeight: this.markerHeight,
+				cRadius: this.cRadius
+			}
 		});
 	};
 
@@ -26911,21 +26925,26 @@
 	var swoopyArrow = __webpack_require__(6);
 	var Annotation = function Annotation(opts) {
 		// console.log(data, svg, scales);
+		var markers = opts.markers;
 
 		var swoopy = swoopyArrow().angle(Math.PI / 4).x(function (d) {
-			return d[0];
+			return d[0] - markers.cRadius;
 		}).y(function (d) {
-			return d[1];
+			return d[1] + markers.cRadius;
 		});
 
 		opts.dataPoints.forEach(function (pointObj, index) {
-			opts.g.append('g').append('path').attr('marker-end', 'url(#arrowhead)').datum([[opts.xScale(pointObj.point.xKey) + 15, opts.yScale(pointObj.point.yKey) + 15], [opts.xScale(pointObj.point.xKey), opts.yScale(pointObj.point.yKey)]]).attr('class', function (d) {
+			opts.g.append('g').attr('transform', 'translate(' + markers.markerWidth + ',' + markers.markerHeight + ')').append('path').attr('marker-end', 'url(#arrowhead)').datum([[opts.xScale(pointObj.point.xKey) + 15, opts.yScale(pointObj.point.yKey) + 15], [opts.xScale(pointObj.point.xKey), opts.yScale(pointObj.point.yKey)]]).attr('class', function (d) {
 				return 'annotation-arrow arrow' + index;
 			}).attr('d', swoopy);
 
+			opts.g.append('g').append('circle').attr('cx', opts.xScale(pointObj.point.xKey)).attr('cy', opts.yScale(pointObj.point.yKey)).attr('r', markers.cRadius);
+
 			var textOffset = opts.g.select('.annotation-arrow.arrow' + index).data()[0][1];
-			console.log(textOffset);
-			opts.container.append('div').attr('class', 'annotation-text').style('left', textOffset[0] + 15 + 'px').style('top', textOffset[1] + 15 + 'px').html(pointObj.text);
+			textOffset[0] = textOffset[0] + 15;
+			textOffset[1] = textOffset[1] + 15;
+
+			opts.container.append('div').attr('class', 'annotation-text').style('left', textOffset[0] + (opts.margin.left + opts.markers.markerWidth) + 'px').style('top', textOffset[1] + (opts.margin.top + opts.markers.markerHeight) + 'px').html(pointObj.text);
 		});
 	};
 

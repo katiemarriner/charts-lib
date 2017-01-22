@@ -16,7 +16,7 @@ var Line = function(opts){
 		xLabel: opts.axes.xLabel ? opts.axes.xLabel : '',
 		yLabel: opts.axes.yLabel ? opts.axes.yLabel : ''
 	}
-	this.aOpts = opts.aOpts
+	this.aOpts = opts.aOpts;
 }
 
 Line.prototype.drawScaffold = function(){
@@ -40,16 +40,24 @@ Line.prototype.drawScaffold = function(){
 }
 
 Line.prototype.assets = function(){
-	this.svg.append("svg:defs").append("svg:marker")
-	    .attr("id", "arrowhead")
-	    .attr("refX", 6)
-	    .attr("refY", 6)
-	    .attr("markerWidth",15)
-	    .attr("markerHeight",15)
-	    .attr("orient", "auto")
-	    .append("path")
-	    .attr("d", "M 0 0 12 6 0 12 3 6")
-	    .style("fill", "black");
+   this.markerWidth = 10;
+   this.markerHeight = 10;
+   this.cRadius = 4;
+
+	this.svg.append("svg:defs")
+       .append('svg:marker')
+        .attr('id', 'arrowhead')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 0)
+        .attr('refY', 0)
+        .attr('markerWidth', this.markerWidth)
+        .attr('markerHeight', this.markerHeight)
+        .attr('orient', 'auto')
+        .append('svg:path')
+        // .attr('fill', 'none')
+        // .attr('stroke-width', 1)
+        // .attr('stroke', '#000')
+        .attr('d', 'M0,-5L10,0L0,5');
 }
 
 Line.prototype.createScales = function(newOpts){
@@ -125,12 +133,18 @@ Line.prototype.drawAnnotations = function(){
 			text: d.text
 		}
 	});
-    new Annotation({
+    this.annotations = new Annotation({
     	container: this.container,
     	g: this.g,
     	xScale: this.x,
     	yScale: this.y,
-    	dataPoints: this.aOpts
+    	dataPoints: this.aOpts,
+    	margin: this.margin,
+    	markers: {
+    		markerWidth: this.markerWidth,
+    		markerHeight: this.markerHeight,
+    		cRadius: this.cRadius
+    	}
     });
 }
 
@@ -185,7 +199,7 @@ Line.prototype.resize = function(newOpts){
 
 Line.prototype.formatData = function(rawData, xParse){
 	var _this = this;
-	return rawData.map(d =>{
+	return rawData.map(d => {
 		return {
 			xKey: xParse(d[_this.xKey]),
 			yKey: +d[_this.yKey]
