@@ -1,52 +1,106 @@
-/*Things required for an annotation
-	1. A data pointObj.point (hardcoded or programmatic)
-	2. Text for that data point
-	3. The position of the data point based on the data
-	4. all of this without svg in order to have a more flexible template
-*/
-
 var swoopyArrow = require('./swoopy-arrow.js');
 var Annotation = function(opts){
-	// console.log(data, svg, scales);
-	var markers = opts.markers;
+	// console.log(data, svg, s);
 
-	var swoopy = swoopyArrow()
+	this.container = opts.container
+    this.g = opts.g;
+    this.x = opts.x;
+    this.y = opts.y;
+    this.margin = opts.margin;
+    this.markers  = opts.markers;
+    this.dataPoints = opts.dataPoints;
+
+	this.pointAttrs = opts.dataPoints.map(this.draw, this);
+	
+}
+
+Annotation.prototype.draw = function(pointObj, index){
+	var markers = this.markers;
+	var margin = this.margin;
+
+	var oneAnnotation = {};
+	oneAnnotation['xKey'] = pointObj.point.xKey;
+	oneAnnotation['yKey'] = pointObj.point.yKey;
+
+	oneAnnotation.swoopy = swoopyArrow()
 		  .angle(Math.PI/4)
 		  .x(function(d) { return d[0] - markers.cRadius; })
 		  .y(function(d) { return d[1] + markers.cRadius; });
 
-	opts.dataPoints.forEach((pointObj, index) => {
-		opts.g.append('g')
-			.attr('transform', 'translate(' + markers.markerWidth + ',' + markers.markerHeight + ')')
-		.append('path')
-		  .attr('marker-end', 'url(#arrowhead)')
-		  .datum([
-		  	[opts.xScale(pointObj.point.xKey)+15,opts.yScale(pointObj.point.yKey)+15],
-		  	[opts.xScale(pointObj.point.xKey),opts.yScale(pointObj.point.yKey)]
-		  ])
-		  .attr('class', function(d){
-		  	return 'annotation-arrow arrow' + index;
-		  })
-		  .attr('d', swoopy);
-
-		opts.g.append('g')
-			.append('circle')
-			.attr('cx', opts.xScale(pointObj.point.xKey))
-			.attr('cy', opts.yScale(pointObj.point.yKey))
-			.attr('r', markers.cRadius);
-
-		var textOffset = opts.g.select('.annotation-arrow.arrow' + index).data()[0][1];
-		textOffset[0] = textOffset[0] + 15;
-		textOffset[1] = textOffset[1] + 15;
-
-
-		opts.container.append('div')
-			.attr('class', 'annotation-text')
-			.style('left', textOffset[0] + (opts.margin.left + opts.markers.markerWidth) + 'px')
-			.style('top', textOffset[1] + (opts.margin.top + opts.markers.markerHeight) + 'px')
-			.html(pointObj.text);
-	});
+	oneAnnotation.pathGroup = this.g.append('g')
+		.attr('transform', 'translate(' + markers.markerWidth + ',' + markers.markerHeight + ')')
 	
+	oneAnnotation.path = oneAnnotation.pathGroup.append('path')
+	  .attr('marker-end', 'url(#arrowhead)')
+	  .attr('class', function(d){
+	  	return 'annotation-arrow arrow' + 'a' + index;
+	  })
+
+  	oneAnnotation.drawLine = oneAnnotation.path
+  	.datum([
+  		[this.x(pointObj.point.xKey)+15,this.y(pointObj.point.yKey)+15],
+  		[this.x(pointObj.point.xKey),this.y(pointObj.point.yKey)]
+  	])
+  	.attr('d', oneAnnotation.swoopy);
+
+	oneAnnotation.pathCircle = this.g
+		.append('circle')
+		.attr('r', markers.cRadius);
+
+	oneAnnotation.pathCircle
+		.attr('cx', this.x(pointObj.point.xKey))
+		.attr('cy', this.y(pointObj.point.yKey));
+		
+
+
+	oneAnnotation.textOffset = oneAnnotation.path.data()[0][1];
+	oneAnnotation.textOffset[0] = oneAnnotation.textOffset[0] + 15;
+	oneAnnotation.textOffset[1] = oneAnnotation.textOffset[1] + 15;
+
+
+	oneAnnotation.htmlOverlay = this.container.append('div')
+		.attr('class', 'annotation-text')
+		.html(pointObj.text);
+		
+	oneAnnotation.htmlOverlay
+		.style('left', oneAnnotation.textOffset[0] + (margin.left + markers.markerWidth) + 'px')
+		.style('top', oneAnnotation.textOffset[1] + (margin.top + markers.markerHeight) + 'px');
+
+	return oneAnnotation;
+}
+
+Annotation.prototype.resize = function(newOpts){
+	this.x = newOpts.x;
+	this.y = newOpts.y;
+
+	this.pointAttrs = this.pointAttrs.map(this.redraw, this);
+}
+
+Annotation.prototype.redraw = function(pointObj, index){
+	var markers = this.markers;
+	var margin = this.margin;
+	var item = this.pointAttrs[index];
+
+	item.textOffset = item.path.data()[0][1];
+	item.textOffset[0] = item.textOffset[0] + 15;
+	item.textOffset[1] = item.textOffset[1] + 15;
+
+	item.drawLine
+	  .datum([
+	  	[this.x(item.xKey)+15,this.y(item.yKey)+15],
+	  	[this.x(item.xKey),this.y(item.yKey)]
+	  ])	 
+	  .attr('d', item.swoopy);
+
+	 item.pathCircle
+	 	.attr('cx', this.x(item.xKey))
+		.attr('cy', this.y(item.yKey));
+
+	item.htmlOverlay
+		.style('left', item.textOffset[0] + (margin.left + markers.markerWidth) + 'px')
+		.style('top', item.textOffset[1] + (margin.top + markers.markerHeight) + 'px');
+
+	return item;
 }
 
 module.exports = Annotation;

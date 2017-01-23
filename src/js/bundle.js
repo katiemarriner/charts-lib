@@ -81,9 +81,12 @@
 				xPosition: d3.axisBottom, //follow the format to the left and go here for reference https://github.com/d3/d3-axis/blob/master/README.md#axisTop
 				yPosition: d3.axisLeft //see above
 			},
-			aOpts: [{
+			dataPoints: [{
 				index: data.length - 1, //this can be an underscore function or hardcoded as long as it's an object with an x and y value in the same format as the data passed into the chart
 				text: data[data.length - 1].time + ' ' + data[data.length - 1].value //pass in text or a template
+			}, {
+				index: 0, //this can be an underscore function or hardcoded as long as it's an object with an x and y value in the same format as the data passed into the chart
+				text: data[0].time + ' ' + data[0].value //pass in text or a template
 			}]
 		});
 		SP500.drawScaffold();
@@ -26756,7 +26759,7 @@
 			xLabel: opts.axes.xLabel ? opts.axes.xLabel : '',
 			yLabel: opts.axes.yLabel ? opts.axes.yLabel : ''
 		};
-		this.aOpts = opts.aOpts;
+		this.dataPoints = opts.dataPoints;
 	};
 
 	Line.prototype.drawScaffold = function () {
@@ -26830,13 +26833,13 @@
 
 		this.g.append('path').datum(this.data).attr('fill', 'none').attr('stroke', 'steelblue').attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round').attr('stroke-width', 1.5).attr('class', 'line').attr('d', this.line);
 
-		if (this.aOpts) this.drawAnnotations();
+		if (this.dataPoints) this.drawAnnotations();
 		// pass in containerSelect, gSelect, scales, dataPoints
 	};
 
 	Line.prototype.drawAnnotations = function () {
 		var _this = this;
-		this.aOpts = this.aOpts.map(function (d) {
+		this.dataPoints = this.dataPoints.map(function (d) {
 			return {
 				point: _this.data[d.index],
 				text: d.text
@@ -26845,9 +26848,9 @@
 		this.annotations = new Annotation({
 			container: this.container,
 			g: this.g,
-			xScale: this.x,
-			yScale: this.y,
-			dataPoints: this.aOpts,
+			x: this.x,
+			y: this.y,
+			dataPoints: this.dataPoints,
 			margin: this.margin,
 			markers: {
 				markerWidth: this.markerWidth,
@@ -26893,6 +26896,11 @@
 		});
 
 		this.g.select('.line').attr('d', this.line);
+
+		this.annotations.resize({
+			x: this.x,
+			y: this.y
+		});
 	};
 
 	Line.prototype.formatData = function (rawData, xParse) {
@@ -26913,37 +26921,81 @@
 
 	'use strict';
 
-	/*Things required for an annotation
-		1. A data pointObj.point (hardcoded or programmatic)
-		2. Text for that data point
-		3. The position of the data point based on the data
-		4. all of this without svg in order to have a more flexible template
-	*/
-
 	var swoopyArrow = __webpack_require__(6);
 	var Annotation = function Annotation(opts) {
-		// console.log(data, svg, scales);
-		var markers = opts.markers;
+		// console.log(data, svg, s);
 
-		var swoopy = swoopyArrow().angle(Math.PI / 4).x(function (d) {
+		this.container = opts.container;
+		this.g = opts.g;
+		this.x = opts.x;
+		this.y = opts.y;
+		this.margin = opts.margin;
+		this.markers = opts.markers;
+		this.dataPoints = opts.dataPoints;
+
+		this.pointAttrs = opts.dataPoints.map(this.draw, this);
+	};
+
+	Annotation.prototype.draw = function (pointObj, index) {
+		var markers = this.markers;
+		var margin = this.margin;
+
+		var oneAnnotation = {};
+		oneAnnotation['xKey'] = pointObj.point.xKey;
+		oneAnnotation['yKey'] = pointObj.point.yKey;
+
+		oneAnnotation.swoopy = swoopyArrow().angle(Math.PI / 4).x(function (d) {
 			return d[0] - markers.cRadius;
 		}).y(function (d) {
 			return d[1] + markers.cRadius;
 		});
 
-		opts.dataPoints.forEach(function (pointObj, index) {
-			opts.g.append('g').attr('transform', 'translate(' + markers.markerWidth + ',' + markers.markerHeight + ')').append('path').attr('marker-end', 'url(#arrowhead)').datum([[opts.xScale(pointObj.point.xKey) + 15, opts.yScale(pointObj.point.yKey) + 15], [opts.xScale(pointObj.point.xKey), opts.yScale(pointObj.point.yKey)]]).attr('class', function (d) {
-				return 'annotation-arrow arrow' + index;
-			}).attr('d', swoopy);
+		oneAnnotation.pathGroup = this.g.append('g').attr('transform', 'translate(' + markers.markerWidth + ',' + markers.markerHeight + ')');
 
-			opts.g.append('g').append('circle').attr('cx', opts.xScale(pointObj.point.xKey)).attr('cy', opts.yScale(pointObj.point.yKey)).attr('r', markers.cRadius);
-
-			var textOffset = opts.g.select('.annotation-arrow.arrow' + index).data()[0][1];
-			textOffset[0] = textOffset[0] + 15;
-			textOffset[1] = textOffset[1] + 15;
-
-			opts.container.append('div').attr('class', 'annotation-text').style('left', textOffset[0] + (opts.margin.left + opts.markers.markerWidth) + 'px').style('top', textOffset[1] + (opts.margin.top + opts.markers.markerHeight) + 'px').html(pointObj.text);
+		oneAnnotation.path = oneAnnotation.pathGroup.append('path').attr('marker-end', 'url(#arrowhead)').attr('class', function (d) {
+			return 'annotation-arrow arrow' + 'a' + index;
 		});
+
+		oneAnnotation.drawLine = oneAnnotation.path.datum([[this.x(pointObj.point.xKey) + 15, this.y(pointObj.point.yKey) + 15], [this.x(pointObj.point.xKey), this.y(pointObj.point.yKey)]]).attr('d', oneAnnotation.swoopy);
+
+		oneAnnotation.pathCircle = this.g.append('circle').attr('r', markers.cRadius);
+
+		oneAnnotation.pathCircle.attr('cx', this.x(pointObj.point.xKey)).attr('cy', this.y(pointObj.point.yKey));
+
+		oneAnnotation.textOffset = oneAnnotation.path.data()[0][1];
+		oneAnnotation.textOffset[0] = oneAnnotation.textOffset[0] + 15;
+		oneAnnotation.textOffset[1] = oneAnnotation.textOffset[1] + 15;
+
+		oneAnnotation.htmlOverlay = this.container.append('div').attr('class', 'annotation-text').html(pointObj.text);
+
+		oneAnnotation.htmlOverlay.style('left', oneAnnotation.textOffset[0] + (margin.left + markers.markerWidth) + 'px').style('top', oneAnnotation.textOffset[1] + (margin.top + markers.markerHeight) + 'px');
+
+		return oneAnnotation;
+	};
+
+	Annotation.prototype.resize = function (newOpts) {
+		this.x = newOpts.x;
+		this.y = newOpts.y;
+
+		this.pointAttrs = this.pointAttrs.map(this.redraw, this);
+	};
+
+	Annotation.prototype.redraw = function (pointObj, index) {
+		var markers = this.markers;
+		var margin = this.margin;
+		var item = this.pointAttrs[index];
+
+		item.textOffset = item.path.data()[0][1];
+		item.textOffset[0] = item.textOffset[0] + 15;
+		item.textOffset[1] = item.textOffset[1] + 15;
+
+		item.drawLine.datum([[this.x(item.xKey) + 15, this.y(item.yKey) + 15], [this.x(item.xKey), this.y(item.yKey)]]).attr('d', item.swoopy);
+
+		item.pathCircle.attr('cx', this.x(item.xKey)).attr('cy', this.y(item.yKey));
+
+		item.htmlOverlay.style('left', item.textOffset[0] + (margin.left + markers.markerWidth) + 'px').style('top', item.textOffset[1] + (margin.top + markers.markerHeight) + 'px');
+
+		return item;
 	};
 
 	module.exports = Annotation;

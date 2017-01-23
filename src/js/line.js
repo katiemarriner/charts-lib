@@ -16,7 +16,7 @@ var Line = function(element, data, opts){
 		xLabel: opts.axes.xLabel ? opts.axes.xLabel : '',
 		yLabel: opts.axes.yLabel ? opts.axes.yLabel : ''
 	}
-	this.aOpts = opts.aOpts;
+	this.dataPoints = opts.dataPoints;
 }
 
 Line.prototype.drawScaffold = function(){
@@ -121,13 +121,13 @@ Line.prototype.drawLine = function(){
       .attr('class', 'line')
       .attr('d', this.line);
 
-    if(this.aOpts)this.drawAnnotations();
+    if(this.dataPoints)this.drawAnnotations();
 	// pass in containerSelect, gSelect, scales, dataPoints
 }
 
 Line.prototype.drawAnnotations = function(){
 	var _this = this;
-	this.aOpts = this.aOpts.map(d => {
+	this.dataPoints = this.dataPoints.map(d => {
 		return {
 			point: _this.data[d.index],
 			text: d.text
@@ -136,9 +136,9 @@ Line.prototype.drawAnnotations = function(){
     this.annotations = new Annotation({
     	container: this.container,
     	g: this.g,
-    	xScale: this.x,
-    	yScale: this.y,
-    	dataPoints: this.aOpts,
+    	x: this.x,
+    	y: this.y,
+    	dataPoints: this.dataPoints,
     	margin: this.margin,
     	markers: {
     		markerWidth: this.markerWidth,
@@ -195,6 +195,11 @@ Line.prototype.resize = function(newOpts){
 
 	this.g.select('.line')
 		.attr('d', this.line);
+
+	this.annotations.resize({
+		x: this.x,
+		y: this.y
+	});
 }
 
 Line.prototype.formatData = function(rawData, xParse){

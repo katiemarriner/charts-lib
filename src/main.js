@@ -33,10 +33,14 @@ d3.tsv('src/data/data.tsv', (data) => {
 			xPosition: d3.axisBottom, //follow the format to the left and go here for reference https://github.com/d3/d3-axis/blob/master/README.md#axisTop
 			yPosition: d3.axisLeft //see above
 		},
-		aOpts: [
+		dataPoints: [
 			{
 				index: data.length-1, //this can be an underscore function or hardcoded as long as it's an object with an x and y value in the same format as the data passed into the chart
     			text: data[data.length-1].time + ' ' + data[data.length-1].value //pass in text or a template
+			},
+			{
+				index: 0, //this can be an underscore function or hardcoded as long as it's an object with an x and y value in the same format as the data passed into the chart
+    			text: data[0].time + ' ' + data[0].value //pass in text or a template
 			}
 		]
 	});
