@@ -68,9 +68,7 @@
 	d3.tsv('src/data/data.tsv', function (data) {
 		// In order to create a line chart with this library, the dataformat must be an array of objects with two key:value pairs. One for the xAxis and one for the yAxis
 		//Example: [{time:'YYYY-MM-DD',value:142.53}...]
-		var SP = new Line({
-			element: '#app', //string (required)
-			data: data, //data (required)
+		var SP500 = new Line('#app', data, {
 			margin: { top: 15, right: 15, bottom: 15, left: 15 }, //object
 			width: document.getElementById('app').clientWidth, //selector or number
 			height: document.getElementById('app').clientWidth / 1.5, //selector or number or ratio equation
@@ -88,10 +86,10 @@
 				text: data[data.length - 1].time + ' ' + data[data.length - 1].value //pass in text or a template
 			}]
 		});
-		SP.drawScaffold();
+		SP500.drawScaffold();
 
 		function resize() {
-			SP.resize({
+			SP500.resize({
 				width: document.getElementById('app').clientWidth, //selector or number
 				height: document.getElementById('app').clientWidth / 1.5 });
 		}
@@ -26743,15 +26741,15 @@
 	var d3 = __webpack_require__(1);
 	var Annotation = __webpack_require__(5);
 
-	var Line = function Line(opts) {
-		this.element = opts.element ? opts.element : '#app';
+	var Line = function Line(element, data, opts) {
+		this.element = element;
 		this.margin = opts.margin ? opts.margin : { top: 15, right: 15, bottom: 15, left: 15 };
 		this.width = opts.width ? opts.width : 600;
 		this.height = opts.height ? opts.height : 400;
 		this.parseTime = opts.parseTime ? opts.parseTime : d3.timeParse('%d-%b-%y');
 		this.xKey = opts.xKey ? opts.xKey : 'time';
 		this.yKey = opts.yKey ? opts.yKey : 'value';
-		this.rawData = opts.data;
+		this.rawData = data;
 		this.axes = {
 			xPosition: opts.axes.xPosition ? opts.axes.xPosition : d3.axisBottom,
 			yPosition: opts.axes.yPosition ? opts.axes.yPosition : d3.axisLeft,
@@ -26968,7 +26966,7 @@
 	  };
 
 	  function render(data) {
-
+	    console.log(data);
 	    data = data.map(function (d, i) {
 	      return [xValue.call(data, d, i), yValue.call(data, d, i)];
 	    });

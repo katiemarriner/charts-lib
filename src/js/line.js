@@ -1,15 +1,15 @@
 var d3 = require('d3');
 var Annotation = require('./annotations.js');
 
-var Line = function(opts){
-	this.element = opts.element ? opts.element : '#app';
+var Line = function(element, data, opts){
+	this.element = element;
 	this.margin = opts.margin ? opts.margin : {top: 15, right: 15, bottom: 15, left: 15};
 	this.width = opts.width ? opts.width : 600;
 	this.height = opts.height ? opts.height : 400;
 	this.parseTime = opts.parseTime ? opts.parseTime : d3.timeParse('%d-%b-%y');
 	this.xKey = opts.xKey ? opts.xKey : 'time';
 	this.yKey = opts.yKey ? opts.yKey : 'value';
-	this.rawData = opts.data;
+	this.rawData = data;
 	this.axes = {
 		xPosition: opts.axes.xPosition ? opts.axes.xPosition : d3.axisBottom,
 		yPosition: opts.axes.yPosition ? opts.axes.yPosition : d3.axisLeft,

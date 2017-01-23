@@ -6,7 +6,7 @@ var swoopyArrow = function() {
       yValue = function(d) { return d[1]; };
 
   function render(data) {
-
+    console.log(data);
     data = data.map(function(d, i) {
       return [xValue.call(data, d, i), yValue.call(data, d, i)];
     });
