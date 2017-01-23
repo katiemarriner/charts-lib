@@ -1,7 +1,8 @@
 ###Create a new line chart
 
 1. Create a new instance of a line
-```javascriptvar SP500 = new Line(element, data, [ opts]);```
+```javascript
+var SP500 = new Line(element, data, [ opts]);```
 
 ###Options (with defaults)
 ```javascript
