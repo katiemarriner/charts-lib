@@ -53,5 +53,7 @@ d3.tsv('src/data/data.tsv', (data) => {
 		});
 	}
 
-	window.onresize = resize;
+	window.onresize = function(){
+		setTimeout(resize, 100);
+	};
 });

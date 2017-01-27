@@ -1,7 +1,6 @@
 var swoopyArrow = require('./swoopy-arrow.js');
 var Annotation = function(opts){
 	// console.log(data, svg, s);
-
 	this.container = opts.container
     this.g = opts.g;
     this.x = opts.x;

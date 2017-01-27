@@ -97,7 +97,9 @@
 				height: document.getElementById('app').clientWidth / 1.5 });
 		}
 
-		window.onresize = resize;
+		window.onresize = function () {
+			setTimeout(resize, 100);
+		};
 	});
 
 /***/ },
@@ -26924,7 +26926,6 @@
 	var swoopyArrow = __webpack_require__(6);
 	var Annotation = function Annotation(opts) {
 		// console.log(data, svg, s);
-
 		this.container = opts.container;
 		this.g = opts.g;
 		this.x = opts.x;
@@ -27018,7 +27019,6 @@
 	  };
 
 	  function render(data) {
-	    console.log(data);
 	    data = data.map(function (d, i) {
 	      return [xValue.call(data, d, i), yValue.call(data, d, i)];
 	    });
