@@ -66,21 +66,9 @@
 	}
 
 	d3.tsv('src/data/data.tsv', function (data) {
-		// In order to create a line chart with this library, the dataformat must be an array of objects with two key:value pairs. One for the xAxis and one for the yAxis
-		//Example: [{time:'YYYY-MM-DD',value:142.53}...]
 		var SP500 = new Line('#app', data, {
-			margin: { top: 15, right: 15, bottom: 15, left: 15 }, //object
 			width: document.getElementById('app').clientWidth, //selector or number
 			height: document.getElementById('app').clientWidth / 1.5, //selector or number or ratio equation
-			xKey: 'time', //string
-			yKey: 'value', //string
-			parseTime: d3.timeParse('%d-%b-%y'), //d3 time format https://github.com/d3/d3-time-format#locale_format
-			axes: {
-				xValue: '', //string
-				yValue: '', //string
-				xPosition: d3.axisBottom, //follow the format to the left and go here for reference https://github.com/d3/d3-axis/blob/master/README.md#axisTop
-				yPosition: d3.axisLeft //see above
-			},
 			dataPoints: [{
 				index: data.length - 1, //this can be an underscore function or hardcoded as long as it's an object with an x and y value in the same format as the data passed into the chart
 				text: data[data.length - 1].time + ' ' + data[data.length - 1].value //pass in text or a template
@@ -89,16 +77,16 @@
 				text: data[0].time + ' ' + data[0].value //pass in text or a template
 			}]
 		});
-		SP500.drawScaffold();
+		SP500.init();
 
 		function resize() {
 			SP500.resize({
-				width: document.getElementById('app').clientWidth, //selector or number
-				height: document.getElementById('app').clientWidth / 1.5 });
+				newWidth: document.getElementById('app').clientWidth, //selector or number
+				newHeight: document.getElementById('app').clientWidth / 1.5 });
 		}
 
 		window.onresize = function () {
-			setTimeout(resize, 100);
+			setTimeout(resize, 500);
 		};
 	});
 
@@ -26755,16 +26743,12 @@
 		this.xKey = opts.xKey ? opts.xKey : 'time';
 		this.yKey = opts.yKey ? opts.yKey : 'value';
 		this.rawData = data;
-		this.axes = {
-			xPosition: opts.axes.xPosition ? opts.axes.xPosition : d3.axisBottom,
-			yPosition: opts.axes.yPosition ? opts.axes.yPosition : d3.axisLeft,
-			xLabel: opts.axes.xLabel ? opts.axes.xLabel : '',
-			yLabel: opts.axes.yLabel ? opts.axes.yLabel : ''
-		};
+		this.axes = opts.axes ? opts.axes : {};
+		this.axes.xPosition = this.axes.xPosition ? this.axes.xPosition : d3.axisBottom, this.axes.yPosition = this.axes.yPosition ? this.axes.yPosition : d3.axisLeft, this.axes.xLabel = this.axes.xLabel ? this.axes.xLabel : '', this.axes.yLabel = this.axes.yLabel ? this.axes.yLabel : '';
 		this.dataPoints = opts.dataPoints;
 	};
 
-	Line.prototype.drawScaffold = function () {
+	Line.prototype.init = function () {
 		var _this = this;
 		var margin = this.margin;
 
@@ -26775,7 +26759,7 @@
 
 		this.g = this.svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-		this.data = this.formatData(this.rawData, this.parseTime, this.xKey, this.yKey);
+		this.data = this.formatRecords(this.rawData, this.parseTime, this.xKey, this.yKey);
 
 		this.createScales();
 	};
@@ -26865,12 +26849,12 @@
 	Line.prototype.resize = function (newOpts) {
 		var margin = this.margin;
 		if (newOpts) {
-			this.width = newOpts.width ? newOpts.width : this.width;
-			this.height = newOpts.height ? newOpts.height : this.height;
-			this.xDomain = newOpts.xDomain ? newOpts.xDomain : this.xDomain;
-			this.yDomain = newOpts.yDomain ? newOpts.yDomain : this.yDomain;
-			this.xRange = newOpts.xRange ? newOpts.xRange : this.xRange;
-			this.yRange = newOpts.yRange ? newOpts.yRange : this.yRange;
+			this.width = newOpts.newWidth ? newOpts.newWidth : this.width;
+			this.height = newOpts.newHeight ? newOpts.newHeight : this.Height;
+			this.xDomain = newOpts.newXDomain ? newOpts.newXDomain : this.XDomain;
+			this.yDomain = newOpts.newYDomain ? newOpts.newYDomain : this.YDomain;
+			this.xRange = newOpts.newXRange ? newOpts.newXRange : this.XRange;
+			this.yRange = newOpts.newYRange ? newOpts.newYRange : this.YRange;
 		}
 
 		var _this = this;
@@ -26905,12 +26889,12 @@
 		});
 	};
 
-	Line.prototype.formatData = function (rawData, xParse) {
+	Line.prototype.formatRecords = function (rawData, xParse, xKey, yKey) {
 		var _this = this;
 		return rawData.map(function (d) {
 			return {
-				xKey: xParse(d[_this.xKey]),
-				yKey: +d[_this.yKey]
+				xKey: xParse(d[xKey]),
+				yKey: +d[yKey]
 			};
 		});
 	};

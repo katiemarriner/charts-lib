@@ -10,16 +10,15 @@ var Line = function(element, data, opts){
 	this.xKey = opts.xKey ? opts.xKey : 'time';
 	this.yKey = opts.yKey ? opts.yKey : 'value';
 	this.rawData = data;
-	this.axes = {
-		xPosition: opts.axes.xPosition ? opts.axes.xPosition : d3.axisBottom,
-		yPosition: opts.axes.yPosition ? opts.axes.yPosition : d3.axisLeft,
-		xLabel: opts.axes.xLabel ? opts.axes.xLabel : '',
-		yLabel: opts.axes.yLabel ? opts.axes.yLabel : ''
-	}
+	this.axes = opts.axes ? opts.axes : {};
+		this.axes.xPosition = this.axes.xPosition ? this.axes.xPosition : d3.axisBottom,
+		this.axes.yPosition = this.axes.yPosition ? this.axes.yPosition : d3.axisLeft,
+		this.axes.xLabel = this.axes.xLabel ? this.axes.xLabel : '',
+		this.axes.yLabel =this.axes.yLabel ? this.axes.yLabel : ''
 	this.dataPoints = opts.dataPoints;
 }
 
-Line.prototype.drawScaffold = function(){
+Line.prototype.init = function(){
 	var _this = this;
 	var margin = this.margin;
 
@@ -30,11 +29,10 @@ Line.prototype.drawScaffold = function(){
 	
 
 	this.assets();
-	
 
 	this.g = this.svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-	this.data = this.formatData(this.rawData, this.parseTime, this.xKey, this.yKey);
+	this.data = this.formatRecords(this.rawData, this.parseTime, this.xKey, this.yKey);
 
 	this.createScales();
 }
@@ -151,12 +149,12 @@ Line.prototype.drawAnnotations = function(){
 Line.prototype.resize = function(newOpts){
 	var margin = this.margin;
 	if(newOpts){
-		this.width = newOpts.width ? newOpts.width : this.width;
-		this.height = newOpts.height ? newOpts.height : this.height;
-		this.xDomain = newOpts.xDomain ? newOpts.xDomain : this.xDomain;
-		this.yDomain = newOpts.yDomain ? newOpts.yDomain : this.yDomain;
-		this.xRange = newOpts.xRange ? newOpts.xRange : this.xRange;
-		this.yRange = newOpts.yRange ? newOpts.yRange : this.yRange;
+		this.width = newOpts.newWidth ? newOpts.newWidth : this.width;
+		this.height = newOpts.newHeight ? newOpts.newHeight : this.Height;
+		this.xDomain = newOpts.newXDomain ? newOpts.newXDomain : this.XDomain;
+		this.yDomain = newOpts.newYDomain ? newOpts.newYDomain : this.YDomain;
+		this.xRange = newOpts.newXRange ? newOpts.newXRange : this.XRange;
+		this.yRange = newOpts.newYRange ? newOpts.newYRange : this.YRange;
 	}
 
 	var _this = this;
@@ -202,12 +200,12 @@ Line.prototype.resize = function(newOpts){
 	});
 }
 
-Line.prototype.formatData = function(rawData, xParse){
+Line.prototype.formatRecords = function(rawData, xParse, xKey, yKey){
 	var _this = this;
 	return rawData.map(d => {
 		return {
-			xKey: xParse(d[_this.xKey]),
-			yKey: +d[_this.yKey]
+			xKey: xParse(d[xKey]),
+			yKey: +d[yKey]
 		}
 	});
 }
