@@ -26,21 +26,16 @@ Line.prototype.init = function(){
 	this.svg = this.container.append('svg')
 		.attr('width', (this.width - margin.left - margin.right))
 		.attr('height', (this.height - margin.top - margin.bottom));
-	
-
-	this.assets();
-
 	this.g = this.svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
 	this.data = this.formatRecords(this.rawData, this.parseTime, this.xKey, this.yKey);
-
+	
+	this.assets();
 	this.createScales();
 }
 
 Line.prototype.assets = function(){
    this.markerWidth = 10;
    this.markerHeight = 10;
-   this.cRadius = 4;
 
 	this.svg.append("svg:defs")
        .append('svg:marker')
@@ -67,17 +62,15 @@ Line.prototype.createScales = function(newOpts){
 		this.xRange = newOpts.xRange ? newOpts.xRange : this.xRange;
 		this.yRange = newOpts.yRange ? newOpts.yRange : this.yRange;
 	}
-
 	var _this = this;
 
 	this.x = d3.scaleTime()
 	    .rangeRound([0, this.width])
 	    .domain(d3.extent(this.data, d => { return d['xKey']; }));
-
 	this.y = d3.scaleLinear()
 	    .rangeRound([this.height, 0])
 	    .domain(d3.extent(this.data, d => { return d['yKey']; }));
-
+	
 	this.createAxes();
 }
 
@@ -189,7 +182,7 @@ Line.prototype.resize = function(newOpts){
 
 	this.line
 		.x(d => { return _this.x(d['xKey']); })
-	    .y(d => { return _this.y(d['yKey']); });
+	  .y(d => { return _this.y(d['yKey']); });
 
 	this.g.select('.line')
 		.attr('d', this.line);
