@@ -4,6 +4,8 @@ Charts
     Multiline
 Start development on this library
 
+Example data from d3 blocks [here](https://bl.ocks.org/mbostock/3883245) and [here](https://bl.ocks.org/mbostock/3884955)
+
 ####Data formats
 Terminology is based on the [Pandas `.to_json` function](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_json.html)
 1. split – {'index': [index, index, ...], 'columns': [column, column, ...], 'data': [value, value, ...]}
