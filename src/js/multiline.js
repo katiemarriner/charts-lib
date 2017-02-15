@@ -41,20 +41,20 @@ MultiLine.prototype.createScales = function(){
 		.range([0, this.width])
 
   this.x.domain([
-    d3.min(this.data, function(c) { return d3.min(c.values, function(d) { return d['xKey']; }); }),
-    d3.max(this.data, function(c) { return d3.max(c.values, function(d) { return d['xKey']; }); })
+    d3.min(this.data, (c) => { return d3.min(c.values, (d) => { return d['xKey']; }); }),
+    d3.max(this.data, (c) => { return d3.max(c.values, (d) => { return d['xKey']; }); })
   ]);
 
   this.y = d3.scaleLinear()
   	.range([this.height, 0]);
 
   this.y.domain([
-    d3.min(this.data, function(c) { return d3.min(c.values, function(d) { return d['yKey']; }); }),
-    d3.max(this.data, function(c) { return d3.max(c.values, function(d) { return d['yKey']; }); })
+    d3.min(this.data, (c) => { return d3.min(c.values, (d) => { return d['yKey']; }); }),
+    d3.max(this.data, (c) => { return d3.max(c.values, (d) => { return d['yKey']; }); })
   ]);
 
   this.z = d3.scaleOrdinal(d3.schemeCategory10);
-  this.z.domain(this.data.map(function(c) { return c.id; }));
+  this.z.domain(this.data.map((c) => { return c.id; }));
 	this.drawLines();
 
 };
@@ -63,9 +63,9 @@ MultiLine.prototype.drawLines = function(){
 	var _this = this;
 
 	this.line = d3.line()
-		.x(function(d) {
+		.x((d) => {
 			return _this.x(d['xKey']); })
-    .y(function(d) { return _this.y(d['yKey']); });
+    .y((d) => { return _this.y(d['yKey']); });
 
   this.lineGroups = this.g.selectAll('g.line-group')
     .data(this.data)
@@ -74,11 +74,67 @@ MultiLine.prototype.drawLines = function(){
 
   this.lineGroups.append('path')
       .attr('class', 'line')
-      .attr('d', function(d) { return _this.line(d.values); })
-      .style('stroke', function(d) { return _this.z(d.key); });
+      .attr('d', (d) => { return _this.line(d.values); })
+      .style('stroke', (d) => { return _this.z(d.key); });
   
 
 };
+
+MultiLine.prototype.resize = function(newOpts){
+	if(newOpts){
+		this.width = newOpts.newWidth; //selector or number
+		this.height = newOpts.newHeight; //selector or number or ratio equation
+	}
+
+	var _this = this;
+	var margin = this.margin;
+
+	this.svg
+		.attr('width', (this.width - margin.left - margin.right))
+		.attr('height', (this.height - margin.top - margin.bottom));	
+	
+	this.g.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+	if(this.newXDomain){
+	   x.domain(this.newXDomain);
+	}
+	if(this.newYDomain){
+	   y.domain(this.newYDomain);
+	}
+
+	this.x
+	    .rangeRound([0, this.width])
+
+	this.y
+	    .rangeRound([this.height, 0])
+
+	// this.g.select('g.x-axis')
+	// 	.attr('transform', 'translate(0,' + this.height + ')')
+	// 	.call(this.axes.xPosition(this.x));
+
+	// this.g.select('g.y-axis')
+	// 	.call(this.axes.yPosition(this.y))
+	// 	.append('text')
+	// 	.attr('fill', '#000')
+	// 	.attr('transform', 'rotate(-90)')
+	// 	.attr('y', 6)
+	// 	.attr('dy', '0.71em')
+	// 	.attr('text-anchor', 'end')
+	// 	.text(this.yLabel);
+
+	this.line
+		.x(d => { return _this.x(d['xKey']); })
+	  .y(d => { return _this.y(d['yKey']); });
+
+  this.g.selectAll('.line')
+      .attr('d', (d) => { return _this.line(d.values); })
+      .style('stroke', (d) => { return _this.z(d.key); });
+
+	
+
+	this.g.select('.line')
+		.attr('d', this.line);
+}
 
 MultiLine.prototype.formatRecords = function(rawData, xParse, xKey, yKey){
 	var _this = this;

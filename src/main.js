@@ -39,10 +39,10 @@ d3.json('src/data/multiline.json', (data) => {
 	Weather.init();
 
 	function resize(){
-		// SP500.resize({
-		// 	newWidth: document.getElementById('app').clientWidth, //selector or number
-		// 	newHeight: document.getElementById('app').clientWidth/1.5, //selector or number or ratio equation
-		// });
+		Weather.resize({
+			newWidth: document.getElementById('app').clientWidth, //selector or number
+			newHeight: document.getElementById('app').clientWidth/1.5, //selector or number or ratio equation
+		});
 	}
 
 	window.onresize = function(){

@@ -87,10 +87,9 @@
 		Weather.init();
 
 		function resize() {
-			// SP500.resize({
-			// 	newWidth: document.getElementById('app').clientWidth, //selector or number
-			// 	newHeight: document.getElementById('app').clientWidth/1.5, //selector or number or ratio equation
-			// });
+			Weather.resize({
+				newWidth: document.getElementById('app').clientWidth, //selector or number
+				newHeight: document.getElementById('app').clientWidth / 1.5 });
 		}
 
 		window.onresize = function () {
@@ -26820,6 +26819,59 @@
 		}).style('stroke', function (d) {
 			return _this.z(d.key);
 		});
+	};
+
+	MultiLine.prototype.resize = function (newOpts) {
+		if (newOpts) {
+			this.width = newOpts.newWidth; //selector or number
+			this.height = newOpts.newHeight; //selector or number or ratio equation
+		}
+
+		var _this = this;
+		var margin = this.margin;
+
+		this.svg.attr('width', this.width - margin.left - margin.right).attr('height', this.height - margin.top - margin.bottom);
+
+		this.g.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+		if (this.newXDomain) {
+			x.domain(this.newXDomain);
+		}
+		if (this.newYDomain) {
+			y.domain(this.newYDomain);
+		}
+
+		this.x.rangeRound([0, this.width]);
+
+		this.y.rangeRound([this.height, 0]);
+
+		// this.g.select('g.x-axis')
+		// 	.attr('transform', 'translate(0,' + this.height + ')')
+		// 	.call(this.axes.xPosition(this.x));
+
+		// this.g.select('g.y-axis')
+		// 	.call(this.axes.yPosition(this.y))
+		// 	.append('text')
+		// 	.attr('fill', '#000')
+		// 	.attr('transform', 'rotate(-90)')
+		// 	.attr('y', 6)
+		// 	.attr('dy', '0.71em')
+		// 	.attr('text-anchor', 'end')
+		// 	.text(this.yLabel);
+
+		this.line.x(function (d) {
+			return _this.x(d['xKey']);
+		}).y(function (d) {
+			return _this.y(d['yKey']);
+		});
+
+		this.g.selectAll('.line').attr('d', function (d) {
+			return _this.line(d.values);
+		}).style('stroke', function (d) {
+			return _this.z(d.key);
+		});
+
+		this.g.select('.line').attr('d', this.line);
 	};
 
 	MultiLine.prototype.formatRecords = function (rawData, xParse, xKey, yKey) {
