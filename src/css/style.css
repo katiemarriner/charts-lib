@@ -16,3 +16,7 @@ svg {
 	max-width: 150px;
     width: 100%;
 }
+
+path {
+	fill: none;
+}

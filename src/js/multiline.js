@@ -28,17 +28,56 @@ MultiLine.prototype.init = function(){
 		.attr('height', (this.height - margin.top - margin.bottom));
 	this.g = this.svg.append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 	this.data = this.formatRecords(this.rawData, this.parseTime, this.xKey, this.yKey);
-	console.log(this.data);
+
 	// this.assets();
 	this.createScales();
 };
 
 MultiLine.prototype.createScales = function(){
 	var _this = this;
+	console.log(this.data);
 
-	this.x = d3.scaleTime().range([0, this.width])
-  this.y = d3.scaleLinear().range([this.height, 0])
+	this.x = d3.scaleTime()
+		.range([0, this.width])
+
+  this.x.domain([
+    d3.min(this.data, function(c) { return d3.min(c.values, function(d) { return d['xKey']; }); }),
+    d3.max(this.data, function(c) { return d3.max(c.values, function(d) { return d['xKey']; }); })
+  ]);
+
+  this.y = d3.scaleLinear()
+  	.range([this.height, 0]);
+
+  this.y.domain([
+    d3.min(this.data, function(c) { return d3.min(c.values, function(d) { return d['yKey']; }); }),
+    d3.max(this.data, function(c) { return d3.max(c.values, function(d) { return d['yKey']; }); })
+  ]);
+
   this.z = d3.scaleOrdinal(d3.schemeCategory10);
+  this.z.domain(this.data.map(function(c) { return c.id; }));
+	this.drawLines();
+
+};
+
+MultiLine.prototype.drawLines = function(){
+	var _this = this;
+
+	this.line = d3.line()
+		.x(function(d) {
+			return _this.x(d['xKey']); })
+    .y(function(d) { return _this.y(d['yKey']); });
+
+  this.lineGroups = this.g.selectAll('g.line-group')
+    .data(this.data)
+    .enter().append('g')
+      .attr('class', 'line-group');
+
+  this.lineGroups.append('path')
+      .attr('class', 'line')
+      .attr('d', function(d) { return _this.line(d.values); })
+      .style('stroke', function(d) { return _this.z(d.key); });
+  
+
 };
 
 MultiLine.prototype.formatRecords = function(rawData, xParse, xKey, yKey){
@@ -52,7 +91,7 @@ MultiLine.prototype.formatRecords = function(rawData, xParse, xKey, yKey){
 			key: d,
 			values:xVals.map((e,ei) => {
 				return {
-					xKey: e,
+					xKey: this.parseTime ? this.parseTime(e) : e,
 					yKey: yVals[e]
 				}
 			})

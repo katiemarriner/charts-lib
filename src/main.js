@@ -24,6 +24,7 @@ d3.json('src/data/multiline.json', (data) => {
 	var Weather = new MultiLine('#app', data, {
 		width: document.getElementById('app').clientWidth, //selector or number
 		height: document.getElementById('app').clientWidth/1.5, //selector or number or ratio equation
+		parseTime: d3.timeParse('%Y%m%d'),
 		dataPoints: [
 			// {
 			// 	index: data.length-1, //this can be an underscore function or hardcoded as long as it's an object with an x and y value in the same format as the data passed into the chart
