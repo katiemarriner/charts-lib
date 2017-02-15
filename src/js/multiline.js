@@ -55,9 +55,27 @@ MultiLine.prototype.createScales = function(){
 
   this.z = d3.scaleOrdinal(d3.schemeCategory10);
   this.z.domain(this.data.map((c) => { return c.id; }));
+  this.createAxes();
 	this.drawLines();
 
 };
+
+MultiLine.prototype.createAxes = function(){
+	this.g.append('g')
+      .attr('class', 'x-axis')
+      .attr('transform', 'translate(0,' + this.height + ')')
+      .call(this.axes.xPosition(this.x));
+
+  this.g.append('g')
+      .attr('class', 'y-axis')
+      .call(this.axes.yPosition(this.y))
+    .append('text')
+      .attr('transform', 'rotate(-90)')
+      .attr('y', 6)
+      .attr('dy', '0.71em')
+      .attr('fill', '#000')
+      .text('Temperature, ºF');
+}
 
 MultiLine.prototype.drawLines = function(){
 	var _this = this;
@@ -76,8 +94,6 @@ MultiLine.prototype.drawLines = function(){
       .attr('class', 'line')
       .attr('d', (d) => { return _this.line(d.values); })
       .style('stroke', (d) => { return _this.z(d.key); });
-  
-
 };
 
 MultiLine.prototype.resize = function(newOpts){
@@ -108,19 +124,12 @@ MultiLine.prototype.resize = function(newOpts){
 	this.y
 	    .rangeRound([this.height, 0])
 
-	// this.g.select('g.x-axis')
-	// 	.attr('transform', 'translate(0,' + this.height + ')')
-	// 	.call(this.axes.xPosition(this.x));
+	this.g.select('g.x-axis')
+		.attr('transform', 'translate(0,' + this.height + ')')
+		.call(this.axes.xPosition(this.x));
 
-	// this.g.select('g.y-axis')
-	// 	.call(this.axes.yPosition(this.y))
-	// 	.append('text')
-	// 	.attr('fill', '#000')
-	// 	.attr('transform', 'rotate(-90)')
-	// 	.attr('y', 6)
-	// 	.attr('dy', '0.71em')
-	// 	.attr('text-anchor', 'end')
-	// 	.text(this.yLabel);
+	this.g.select('g.y-axis')
+		.call(this.axes.yPosition(this.y));
 
 	this.line
 		.x(d => { return _this.x(d['xKey']); })
