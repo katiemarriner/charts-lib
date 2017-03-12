@@ -76,10 +76,6 @@
 			// ]
 		});
 		Stacked.init();
-	});
-
-	d3.json('src/data/multiLine.json', function (data) {
-		// console.log(columns)
 		// var AAPL = new Line('#app', data, {
 		// 	width: document.getElementById('app').clientWidth, //selector or number
 		// 	height: document.getElementById('app').clientWidth/1.5, //selector or number or ratio equation

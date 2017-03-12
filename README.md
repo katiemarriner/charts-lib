@@ -8,14 +8,16 @@ Example data from d3 blocks [here](https://bl.ocks.org/mbostock/3883245) and [he
 
 ####Data formats
 Terminology is based on the [Pandas `.to_json` function](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_json.html)
-1. split – {'index': [index, index, ...], 'columns': [column, column, ...], 'data': [value, value, ...]}
-2. records – [{column: value}, {column: value}, ...]
-3. index – {index: {column: value}, index: {column: value}, index: {...}}
-4. columns – {column: {index: value, index: value, ...}, column: {...}}
-5. values – [[value, value, ...], [value, value, ...], [...]]
+
+1. split – `{'index': [index, index, ...], 'columns': [column, column, ...], 'data': [value, value, ...]}`
+2. records – `[{column: value}, {column: value}, ...]`
+3. index – `{index: {column: value}, index: {column: value}, index: {...}}`
+4. columns – `{column: {index: value, index: value, ...}, column: {...}}`
+5. values – `[[value, value, ...], [value, value, ...], [...]]`
 
 Line chart
 Multiline chart
+Diverging stacked bar chart
 
 ##Charts
 ### Line chart
@@ -71,7 +73,11 @@ aOpts: [
 
 ###Multiline chart
 ####Recommended data formats
-* 
+
+
+###Diverging stacked bar chart
+[D3 example](https://bl.ocks.org/mbostock/b5935342c6d21928111928401e2c8608)
+####Recommended data formats
 
 ###Start development on this library
 ####Install

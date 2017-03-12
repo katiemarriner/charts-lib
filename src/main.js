@@ -6,7 +6,7 @@ var Data = require('./js/data.js');
 // var MultiLine = require('./js/multiLine.js');
 var StackedBar = require('./js/stackedBar.js');
 
-d3.json('src/data/stackedBar.json', function(data){
+d3.json('src/data/stackedBar.json', (data) => {
 	var rowKey = 'month';
 
 	var Stacked = new StackedBar('#app', data, {
@@ -26,11 +26,6 @@ d3.json('src/data/stackedBar.json', function(data){
 		// ]
 	});
 	Stacked.init();
-});
-
-
-d3.json('src/data/multiLine.json', (data) => {
-	// console.log(columns)
 	// var AAPL = new Line('#app', data, {
 	// 	width: document.getElementById('app').clientWidth, //selector or number
 	// 	height: document.getElementById('app').clientWidth/1.5, //selector or number or ratio equation
