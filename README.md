@@ -33,7 +33,7 @@ Terminology is based on the [Pandas `.to_json` function](http://pandas.pydata.or
 var SP500 = new Line(element, data [, opts]);
 ```
 
-###Options (`opts`) (with defaults)
+#####Options (`opts`) (with defaults)
 ```
 {
     margin: {top:15,right:15,bottom:15,left:15} //object
