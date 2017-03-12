@@ -1,10 +1,9 @@
-Data formats
-Charts
-    Line
-    Multiline
-Start development on this library
-
-Example data from d3 blocks [here](https://bl.ocks.org/mbostock/3883245) and [here](https://bl.ocks.org/mbostock/3884955)
+* Data formats
+* Charts
+    - Line
+    - Multiline
+    - Diverging bar chart
+* Start development on this library
 
 ####Data formats
 Terminology is based on the [Pandas `.to_json` function](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_json.html)
@@ -15,12 +14,9 @@ Terminology is based on the [Pandas `.to_json` function](http://pandas.pydata.or
 4. columns – `{column: {index: value, index: value, ...}, column: {...}}`
 5. values – `[[value, value, ...], [value, value, ...], [...]]`
 
-Line chart
-Multiline chart
-Diverging stacked bar chart
-
 ##Charts
 ### Line chart
+[D3 example](https://bl.ocks.org/mbostock/3883245)
 
 ####Recommended data formats
 * records
@@ -72,6 +68,7 @@ aOpts: [
 ```
 
 ###Multiline chart
+[D3 example](https://bl.ocks.org/mbostock/3884955)
 ####Recommended data formats
 
 
