@@ -14,6 +14,7 @@ var Annotation = function(opts){
 }
 
 Annotation.prototype.draw = function(pointObj, index){
+	console.log(pointObj);
 	var markers = this.markers;
 	var margin = this.margin;
 

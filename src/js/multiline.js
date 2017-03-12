@@ -11,10 +11,11 @@ var MultiLine = function(element, data, opts){
 	this.yKey = opts.yKey ? opts.yKey : 'value';
 	this.rawData = data;
 	this.axes = opts.axes ? opts.axes : {};
-		this.axes.xPosition = this.axes.xPosition ? this.axes.xPosition : d3.axisBottom,
-		this.axes.yPosition = this.axes.yPosition ? this.axes.yPosition : d3.axisLeft,
-		this.axes.xLabel = this.axes.xLabel ? this.axes.xLabel : '',
-		this.axes.yLabel =this.axes.yLabel ? this.axes.yLabel : ''
+		this.axes.xPosition = this.axes.xPosition ? this.axes.xPosition : d3.axisBottom;
+		this.axes.yPosition = this.axes.yPosition ? this.axes.yPosition : d3.axisLeft;
+		this.axes.xLabel = this.axes.xLabel ? this.axes.xLabel : '';
+		this.axes.yLabel =this.axes.yLabel ? this.axes.yLabel : '';
+	this.dataPoints = opts.dataPoints;
 	// this.dataPoints = opts.dataPoints;
 };
 
@@ -81,8 +82,7 @@ MultiLine.prototype.drawLines = function(){
 	var _this = this;
 
 	this.line = d3.line()
-		.x((d) => {
-			return _this.x(d['xKey']); })
+		.x((d) => { return _this.x(d['xKey']); })
     .y((d) => { return _this.y(d['yKey']); });
 
   this.lineGroups = this.g.selectAll('g.line-group')
@@ -94,7 +94,32 @@ MultiLine.prototype.drawLines = function(){
       .attr('class', 'line')
       .attr('d', (d) => { return _this.line(d.values); })
       .style('stroke', (d) => { return _this.z(d.key); });
+
+   // if(this.dataPoints)this.drawAnnotations();
 };
+
+MultiLine.prototype.drawAnnotations = function(){
+	var _this = this;
+	this.dataPoints = this.dataPoints.map(d => {
+		return {
+			point: _this.data[d.index],
+			text: d.text
+		}
+	});
+    this.annotations = new Annotation({
+    	container: this.container,
+    	g: this.g,
+    	x: this.x,
+    	y: this.y,
+    	dataPoints: this.dataPoints,
+    	margin: this.margin,
+    	markers: {
+    		markerWidth: this.markerWidth,
+    		markerHeight: this.markerHeight,
+    		cRadius: this.cRadius
+    	}
+    });
+}
 
 MultiLine.prototype.resize = function(newOpts){
 	if(newOpts){
@@ -138,8 +163,6 @@ MultiLine.prototype.resize = function(newOpts){
   this.g.selectAll('.line')
       .attr('d', (d) => { return _this.line(d.values); })
       .style('stroke', (d) => { return _this.z(d.key); });
-
-	
 
 	this.g.select('.line')
 		.attr('d', this.line);
