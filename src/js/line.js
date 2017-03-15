@@ -3,18 +3,18 @@ var Annotation = require('./annotations.js');
 
 var Line = function(element, data, opts){
 	this.element = element;
-	this.margin = opts.margin ? opts.margin : {top: 15, right: 15, bottom: 15, left: 15};
-	this.width = opts.width ? opts.width : 600;
-	this.height = opts.height ? opts.height : 400;
-	this.parseTime = opts.parseTime ? opts.parseTime : d3.timeParse('%d-%b-%y');
-	this.xKey = opts.xKey ? opts.xKey : 'time';
-	this.yKey = opts.yKey ? opts.yKey : 'value';
+	this.margin = opts.margin || {top: 15, right: 15, bottom: 15, left: 15};
+	this.width = opts.width || 600;
+	this.height = opts.height || 400;
+	this.parseTime = opts.parseTime || d3.timeParse('%d-%b-%y');
+	this.xKey = opts.xKey || 'time';
+	this.yKey = opts.yKey || 'value';
 	this.rawData = data;
 	this.axes = opts.axes ? opts.axes : {};
-		this.axes.xPosition = this.axes.xPosition ? this.axes.xPosition : d3.axisBottom,
-		this.axes.yPosition = this.axes.yPosition ? this.axes.yPosition : d3.axisLeft,
-		this.axes.xLabel = this.axes.xLabel ? this.axes.xLabel : '',
-		this.axes.yLabel =this.axes.yLabel ? this.axes.yLabel : ''
+		this.axes.xPosition = this.axes.xPosition || d3.axisBottom;
+		this.axes.yPosition = this.axes.yPosition || d3.axisLeft;
+		this.axes.xLabel = this.axes.xLabel || '';
+		this.axes.yLabel =this.axes.yLabel || '';
 	this.dataPoints = opts.dataPoints;
 }
 
@@ -34,23 +34,24 @@ Line.prototype.init = function(){
 }
 
 Line.prototype.assets = function(){
-   this.markerWidth = 10;
-   this.markerHeight = 10;
+  this.markerWidth = 10;
+  this.markerHeight = 10;
+  this.cRadius = 4;
 
-	this.svg.append("svg:defs")
-       .append('svg:marker')
-        .attr('id', 'arrowhead')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 0)
-        .attr('refY', 0)
-        .attr('markerWidth', this.markerWidth)
-        .attr('markerHeight', this.markerHeight)
-        .attr('orient', 'auto')
-        .append('svg:path')
-        // .attr('fill', 'none')
-        // .attr('stroke-width', 1)
-        // .attr('stroke', '#000')
-        .attr('d', 'M0,-5L10,0L0,5');
+	this.svg.append('svg:defs')
+	   .append('svg:marker')
+	    .attr('id', 'arrowhead')
+	    .attr('viewBox', '0 -5 10 10')
+	    .attr('refX', 5)
+	    .attr('refY', 0)
+	    .attr('markerWidth', this.markerWidth)
+	    .attr('markerHeight', this.markerHeight)
+	    .attr('orient', 'auto')
+	    .append('svg:path')
+		    .attr('fill', '#000')
+		    .attr('stroke-width', 1)
+		    .attr('stroke', '#000')
+	    .attr('d', 'M0,-5L10,0L0,5');
 }
 
 Line.prototype.createScales = function(newOpts){

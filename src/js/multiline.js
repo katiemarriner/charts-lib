@@ -34,9 +34,25 @@ MultiLine.prototype.init = function(){
 	this.createScales();
 };
 
+MultiLine.prototype.assets = function(){
+	this.svg.append('svg:defs')
+   .append('svg:marker')
+    .attr('id', 'arrowhead')
+    .attr('viewBox', '0 -5 10 10')
+    .attr('refX', 5)
+    .attr('refY', 0)
+    .attr('markerWidth', this.markerWidth)
+    .attr('markerHeight', this.markerHeight)
+    .attr('orient', 'auto')
+    .append('svg:path')
+	    .attr('fill', '#000')
+	    .attr('stroke-width', 1)
+	    .attr('stroke', '#000')
+    .attr('d', 'M0,-5L10,0L0,5');
+	  };
+
 MultiLine.prototype.createScales = function(){
 	var _this = this;
-	console.log(this.data);
 
 	this.x = d3.scaleTime()
 		.range([0, this.width])
