@@ -1,11 +1,11 @@
-* Data formats
-* Charts
-    - Line
-    - Multiline
-    - Diverging bar chart
-* Start development on this library
+* [Data formats](#data-formats)
+* [Charts](#charts)
+    - [Line](#line)
+    - [Multiline](#multiline)
+    - [Diverging bar chart](#diverging-bar-chart)
+* [Start development on this library](#development)
 
-####Data formats
+#### Data formats
 Terminology is based on the [Pandas `.to_json` function](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_json.html)
 
 1. split – `{'index': [index, index, ...], 'columns': [column, column, ...], 'data': [value, value, ...]}`
@@ -14,11 +14,11 @@ Terminology is based on the [Pandas `.to_json` function](http://pandas.pydata.or
 4. columns – `{column: {index: value, index: value, ...}, column: {...}}`
 5. values – `[[value, value, ...], [value, value, ...], [...]]`
 
-##Charts
+## Charts
 ### Line chart
 [D3 example](https://bl.ocks.org/mbostock/3883245)
 
-####Recommended data formats
+#### Recommended data formats
 * records
     - xValue – key
     - yValue – value
@@ -26,14 +26,14 @@ Terminology is based on the [Pandas `.to_json` function](http://pandas.pydata.or
     - xValue = column (array) index
     - yValue = column (array) index
 
-####New instance
+#### New instance
 
 1. Create a new instance of a chart
 ```
 var SP500 = new Line(element, data [, opts]);
 ```
 
-#####Options (`opts`) (with defaults)
+##### Options (`opts`) (with defaults)
 ```
 {
     margin: {top:15,right:15,bottom:15,left:15} //object
@@ -67,17 +67,17 @@ aOpts: [
 ]
 ```
 
-###Multiline chart
+### Multiline chart
 [D3 example](https://bl.ocks.org/mbostock/3884955)
-####Recommended data formats
+#### Recommended data formats
 
 
-###Diverging stacked bar chart
+### Diverging stacked bar chart
 [D3 example](https://bl.ocks.org/mbostock/b5935342c6d21928111928401e2c8608)
-####Recommended data formats
+#### Recommended data formats
 
-###Start development on this library
-####Install
+### Development
+#### Install
 Run `npm install` to install all the requirements. This project runs on webpack and node.js because...
 * it keeps the code modular
 * it uses JSHint to find JS errors
