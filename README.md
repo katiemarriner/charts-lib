@@ -1,11 +1,12 @@
+# Pandas -> D3 Charting Library
 * [Data formats](#data-formats)
-* [Charts](#charts)
+* [Chart types](#chart-types)
     - [Line](#line)
     - [Multiline](#multiline)
     - [Diverging bar chart](#diverging-bar-chart)
 * [Start development on this library](#development)
 
-#### Data formats
+## Data formats
 Terminology is based on the [Pandas `.to_json` function](http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_json.html)
 
 1. split – `{'index': [index, index, ...], 'columns': [column, column, ...], 'data': [value, value, ...]}`
@@ -14,7 +15,7 @@ Terminology is based on the [Pandas `.to_json` function](http://pandas.pydata.or
 4. columns – `{column: {index: value, index: value, ...}, column: {...}}`
 5. values – `[[value, value, ...], [value, value, ...], [...]]`
 
-## Charts
+## Chart types
 ### Line chart
 [D3 example](https://bl.ocks.org/mbostock/3883245)
 
@@ -70,14 +71,27 @@ aOpts: [
 ### Multiline chart
 [D3 example](https://bl.ocks.org/mbostock/3884955)
 #### Recommended data formats
+tk
 
+#### New instance
+tk
+
+#### Options
+tk
 
 ### Diverging stacked bar chart
 [D3 example](https://bl.ocks.org/mbostock/b5935342c6d21928111928401e2c8608)
 #### Recommended data formats
+tk
 
-### Development
-#### Install
+#### New instance
+tk
+
+#### Options
+tk
+
+## Development
+### Install
 Run `npm install` to install all the requirements. This project runs on webpack and node.js because...
 * it keeps the code modular
 * it uses JSHint to find JS errors
